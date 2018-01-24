@@ -135,11 +135,31 @@
     //
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
+      var counter = 0;
+      var offset = majorDiagonalColumnIndexAtFirstRow;
+
+      for (var i = 0; i < this.get('n'); i++) {
+        if ((offset + i >= 0 ) && (offset + i < this.get('n') - 1)) {
+          if (this.rows()[i][offset + i] === 1) {
+            if (counter > 0) {
+              return true;
+            } else {
+              counter++;
+            }
+          }
+          
+        } 
+      }
       return false; // fixme
     },
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
+      for (var i = 0; i < this.get('n'); i++) {
+        if (this.hasMajorDiagonalConflictAt(this._getFirstRowColumnIndexForMajorDiagonalOn(0, i)) || this.hasMajorDiagonalConflictAt(this._getFirstRowColumnIndexForMajorDiagonalOn(i, 0))) {
+          return true;
+        }        
+      }
       return false; // fixme
     },
 
@@ -150,11 +170,32 @@
     //
     // test if a specific minor diagonal on this board contains a conflict
     hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
+      var counter = 0;
+      var offset = minorDiagonalColumnIndexAtFirstRow;
+
+      
+      for (var i = 0; i < this.get('n'); i++) {
+        if ((offset - i >= 0 ) && (offset - i <= this.get('n'))) {
+          if (this.rows()[i][offset - i] === 1) {
+            if (counter > 0) {
+              return true;
+            } else {
+              counter++;
+            }
+          }
+        } 
+      }
       return false; // fixme
     },
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
+      for (var i = 0; i < this.get('n'); i++) {
+        if (this.hasMinorDiagonalConflictAt(this._getFirstRowColumnIndexForMinorDiagonalOn(i, 0)) ||
+             this.hasMinorDiagonalConflictAt(this._getFirstRowColumnIndexForMinorDiagonalOn(this.get('n') - 1, i))) {
+          return true;
+        }
+      }
       return false; // fixme
     }
 
