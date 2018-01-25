@@ -21,7 +21,7 @@ window.copyNestedArray = function(arr) {
   });
 };
 
-window.findNRooksSolution = function(n) {
+window.findNRooksSolutionElse = function(n) {
   rooksSolutions = 0;
   var solution = new Board({'n': n}); //fixme
   //var board = new Board({n: n});
@@ -38,17 +38,18 @@ window.findNRooksSolution = function(n) {
     var originalBoardRows = copyNestedArray(boardRows);
     
     for (var i = startingRow; i < originalBoard.get('n'); i++) {
-      //var rooks = originalBoard.numPieces();
+      
       if (!foundSolution) {
         for (var j = startingColumn; j < originalBoard.get('n'); j++) {
           //create a new board here because we want to be starting from the original
           //board each time
           var board = new Board(copyNestedArray(originalBoardRows));
           board.togglePiece(i, j);
-          if (!board.hasAnyRooksConflicts()) {
+          //if (rowConflict) then i + 1
+          if (!board.hasRowConflictAt(i) && !board.hasColConflictAt(j)) {
             //rooks++;
             //check how many pieces are on board, if piece == n we return board
-            if (board.numPieces() === n) {
+            if (board.get('pieces') === n) {
               solution = board;
               foundSolution = true;
               rooksSolutions++;
@@ -83,11 +84,67 @@ window.findNRooksSolution = function(n) {
   
   return solution.rows();
 };
+window.findNRooksSolution = function(n) {
+  window.rooksSolutions = 0;
+  var solution = new Board({n: n});
+  
+  var innerFunction = function(boardRows, startingRow, startingCol) {
+    var foundSolution = false;
+    var origBoard = new Board(boardRows);
+    //Need original copy of rows
+    var copiedBoardRows = copyNestedArray(boardRows);
+    while (!foundSolution && origBoard._isInBounds(startingRow, startingCol)) {
+      //
+      var newBoard = new Board(copyNestedArray(copiedBoardRows));
+      newBoard.togglePiece(startingRow, startingCol);
+      
+      if (newBoard.get('pieces') === n) {
+        foundSolution = true;
+        rooksSolutions++;
+        solution = newBoard;
+      }
+     
+      var nextStartingRow = startingRow + 1;
+      var nextStartingColumn = 0;
+      var hasColConflict = true;
+      while (hasColConflict) {
+        if (newBoard.hasPieceInCol(nextStartingColumn)) {
+          nextStartingColumn++;
+          if (nextStartingColumn >= newBoard.get('n')) {
+            //were unable to find a valid column
+            return;
+          }
+        } else {
+          hasColConflict = false;
+        }
+      }
+      if (origBoard._isInBounds(nextStartingRow, nextStartingColumn)) {
+        innerFunction(newBoard.rows(), nextStartingRow, nextStartingColumn);
+      }
+      if (startingCol === newBoard.get('n') - 1) {
+        startingCol = 0;
+        while (newBoard.hasPieceInCol(startingCol) && startingCol < origBoard.get('n') - 1 ) {
+          startingCol++; 
+        }
+        startingRow++;
+      } else {        
+        startingCol++;
+        while (newBoard.hasPieceInCol(startingCol) && startingCol < origBoard.get('n') - 1 ) {
+          startingCol++; 
+        }
+      } 
+    }
+  };
+  innerFunction(solution.rows(), 0, 0);
+  return solution.rows();
+
+};
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
   findNRooksSolution(n);
-  var solutionCount = rooksSolutions;
+  debugger
+  var solutionCount = window.rooksSolutions;
   console.log('solution count ' + solutionCount);
   
 

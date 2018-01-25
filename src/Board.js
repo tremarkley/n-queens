@@ -7,6 +7,9 @@
   window.Board = Backbone.Model.extend({
 
     initialize: function (params) {
+      
+      
+      
       if (_.isUndefined(params) || _.isNull(params)) {
         
         
@@ -18,7 +21,10 @@
       } else {
         this.set('n', params.length);
       }
+      
+      this.set('pieces', this.numPieces());
     },
+    
 
     rows: function() {
       return _(_.range(this.get('n'))).map(function(rowIndex) {
@@ -29,6 +35,11 @@
     togglePiece: function(rowIndex, colIndex) {
       this.get(rowIndex)[colIndex] = + !this.get(rowIndex)[colIndex];
       this.trigger('change');
+      if (this.get(rowIndex)[colIndex] === 1) {
+        this.set('pieces', this.get('pieces') + 1);
+      } else {
+        this.set('pieces', this.get('pieces') - 1);
+      }
     },
 
     _getFirstRowColumnIndexForMajorDiagonalOn: function(rowIndex, colIndex) {
@@ -90,10 +101,18 @@
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex) {
       var row = this.rows()[rowIndex];
-      row = _.filter(row, function(val) {
-        return val === 1;
-      }).length;
-      return row > 1 ? true : false;
+      var counter = 0;
+      for (var i = 0; i < this.get('n'); i++) {
+        if (row[i] === 1) {
+          if (counter > 0) {
+            return true;
+          } else {
+            counter++;
+          }
+        }
+      }
+      return false;
+
     },
 
     // test if any rows on this board contain conflicts
@@ -126,6 +145,15 @@
       }
       
       return false; // fixme
+    },
+    
+    hasPieceInCol: function(colIndex) {
+      for (var i = 0; i < this.get('n'); i++) {
+        if (this.rows()[i][colIndex] === 1) {
+          return true;
+        }
+      }
+      return false;
     },
 
     // test if any columns on this board contain conflicts
