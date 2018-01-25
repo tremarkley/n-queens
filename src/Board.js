@@ -62,6 +62,14 @@
         0 <= colIndex && colIndex < this.get('n')
       );
     },
+    
+    numPieces: function() {
+      return _.reduce(this.rows(), function(memo, row) {
+        return memo + _.reduce(row, function(memo, col) {
+          return memo + col;
+        }, 0);
+      }, 0);
+    },
 
 
     /*

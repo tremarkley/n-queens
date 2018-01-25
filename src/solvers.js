@@ -15,17 +15,20 @@
 
 
 
+
 window.findNRooksSolution = function(n) {
   
   var solution = new Board({'n': n}); //fixme
   //var board = new Board({n: n});
   // console.log('board-n: ', board.get('n'));
   // console.log(`boardrows ${board.rows()}`);
-  var rooks = 0;
+  
   var foundSolution = false;
   var innerFunction = function(boardRows, startingRow, startingColumn) {
     var board = new Board(boardRows);
+    
     for (var i = startingRow; i < board.get('n'); i++) {
+      var rooks = board.numPieces();
       if (!foundSolution) {
         for (var j = startingColumn; j < board.get('n'); j++) {
           //create a new board here because we want to be starting from the original
