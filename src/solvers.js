@@ -13,34 +13,46 @@
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n rooks placed such that none of them can attack each other
 
+window.rooksSolutions = 0;
 
-
+window.copyNestedArray = function(arr) {
+  return arr.map(function(val) {
+    return val.slice();
+  });
+};
 
 window.findNRooksSolution = function(n) {
-  
+  rooksSolutions = 0;
   var solution = new Board({'n': n}); //fixme
   //var board = new Board({n: n});
   // console.log('board-n: ', board.get('n'));
   // console.log(`boardrows ${board.rows()}`);
   
-  var foundSolution = false;
+  
   var innerFunction = function(boardRows, startingRow, startingColumn) {
-    var board = new Board(boardRows);
+    var foundSolution = false;
+    var originalBoard = new Board(boardRows);
+    /*var originalBoardRows = originalBoard.rows().map(function(val) {
+      return val.slice();
+    });*/
+    var originalBoardRows = copyNestedArray(boardRows);
     
-    for (var i = startingRow; i < board.get('n'); i++) {
-      var rooks = board.numPieces();
+    for (var i = startingRow; i < originalBoard.get('n'); i++) {
+      //var rooks = originalBoard.numPieces();
       if (!foundSolution) {
-        for (var j = startingColumn; j < board.get('n'); j++) {
+        for (var j = startingColumn; j < originalBoard.get('n'); j++) {
           //create a new board here because we want to be starting from the original
           //board each time
-          board = new Board(boardRows);
+          var board = new Board(copyNestedArray(originalBoardRows));
           board.togglePiece(i, j);
           if (!board.hasAnyRooksConflicts()) {
-            rooks++;
+            //rooks++;
             //check how many pieces are on board, if piece == n we return board
-            if (rooks === n) {
+            if (board.numPieces() === n) {
               solution = board;
               foundSolution = true;
+              rooksSolutions++;
+              
               break;
             }
             //pass in next available slot and the same board
@@ -68,12 +80,16 @@ window.findNRooksSolution = function(n) {
   };
   innerFunction(solution.rows(), 0, 0);
   console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
+  
   return solution.rows();
 };
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
-  var solutionCount = undefined; //fixme
+  findNRooksSolution(n);
+  var solutionCount = rooksSolutions;
+  console.log('solution count ' + solutionCount);
+  
 
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
