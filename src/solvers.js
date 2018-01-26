@@ -102,37 +102,55 @@ window.findNRooksSolution = function(n) {
         foundSolution = true;
         rooksSolutions++;
         solution = newBoard;
-      }
-     
-      var nextStartingRow = startingRow + 1;
-      var nextStartingColumn = 0;
-      var hasColConflict = true;
-      while (hasColConflict) {
-        if (newBoard.hasPieceInCol(nextStartingColumn)) {
-          nextStartingColumn++;
-          if (nextStartingColumn >= newBoard.get('n')) {
+      } else {
+        var nextStartingRow = startingRow + 1;
+        //startingRow = nextStartingRow;
+        var nextStartingColumn = 0;
+        var hasColConflict = true;
+        while (hasColConflict) {
+          if (newBoard.hasPieceInCol(nextStartingColumn)) {
+            nextStartingColumn++;
+            if (nextStartingColumn >= newBoard.get('n')) {
             //were unable to find a valid column
-            return;
+              return;
+            }
+          } else {
+            hasColConflict = false;
+          }
+        }
+        if (origBoard._isInBounds(nextStartingRow, nextStartingColumn)) {
+          innerFunction(newBoard.rows(), nextStartingRow, nextStartingColumn);
+        }
+        if (startingCol === newBoard.get('n') - 1) {
+          // startingCol = 0;
+          // while (newBoard.hasPieceInCol(startingCol) && startingCol < origBoard.get('n') - 1 ) {
+          //   startingCol++; 
+          // }
+          //startingRow++;
+          startingRow++;
+          startingCol = 0;
+          while (newBoard.hasPieceInCol(startingCol)) {
+            if (startingCol === origBoard.get('n') - 1) {
+              return;
+            }
+            startingCol++;
           }
         } else {
-          hasColConflict = false;
+          while (newBoard.hasPieceInCol(startingCol)) {
+            startingCol++;
+            if (startingCol === origBoard.get('n')) {
+              startingRow++;
+              startingCol = 0;
+              while (newBoard.hasPieceInCol(startingCol)) {
+                if (startingCol === origBoard.get('n') - 1) {
+                  return;
+                }
+                startingCol++;
+              }
+            } 
+          }
         }
       }
-      if (origBoard._isInBounds(nextStartingRow, nextStartingColumn)) {
-        innerFunction(newBoard.rows(), nextStartingRow, nextStartingColumn);
-      }
-      if (startingCol === newBoard.get('n') - 1) {
-        startingCol = 0;
-        while (newBoard.hasPieceInCol(startingCol) && startingCol < origBoard.get('n') - 1 ) {
-          startingCol++; 
-        }
-        startingRow++;
-      } else {        
-        startingCol++;
-        while (newBoard.hasPieceInCol(startingCol) && startingCol < origBoard.get('n') - 1 ) {
-          startingCol++; 
-        }
-      } 
     }
   };
   innerFunction(solution.rows(), 0, 0);
@@ -143,7 +161,7 @@ window.findNRooksSolution = function(n) {
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
   findNRooksSolution(n);
-  debugger
+
   var solutionCount = window.rooksSolutions;
   console.log('solution count ' + solutionCount);
   
