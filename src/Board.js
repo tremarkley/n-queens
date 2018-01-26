@@ -177,7 +177,7 @@
       var offset = majorDiagonalColumnIndexAtFirstRow;
 
       for (var i = 0; i < this.get('n'); i++) {
-        if ((offset + i >= 0 ) && (offset + i < this.get('n') - 1)) {
+        if ((offset + i >= 0 ) && (offset + i < this.get('n'))) {
           if (this.rows()[i][offset + i] === 1) {
             if (counter > 0) {
               return true;

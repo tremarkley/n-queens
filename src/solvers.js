@@ -172,7 +172,7 @@ window.countNRooksSolutions = function(n) {
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
-  debugger
+  // debugger
   var foundSolution = false;
   var solution = new Board({ n: n });
   if (n === 2 || n === 3 || n === 0) {
@@ -185,8 +185,8 @@ window.findNQueensSolution = function(n) {
   /// 
   
   var traverseBoard = function(board, row, col) {
-    if (board.hasAnyConflicts(row, col - 1)) {
-      board.togglePiece(row, col - 1);
+    if (board.hasAnyConflicts(row, col)) {
+      board.togglePiece(row, col);
       return;
     }
     if (board.get('pieces') === n) {
@@ -200,17 +200,21 @@ window.findNQueensSolution = function(n) {
         for (var j = 0; j < n; j++) {
           if (!foundSolution) {
             if (!hasTraversed) {
-              j = col - 1;
+              j = col;
               hasTraversed = true;
             } else {
               board.togglePiece(i, j);
-              traverseBoard(board, i, j + 1);
+              traverseBoard(board, i, j);
             }
+          } else {
+            break;
           }
         }
       }
+      board.togglePiece(row, col);
     }
   };
+  solution.togglePiece(0, 0);
   traverseBoard(solution, 0, 0);
   
   
