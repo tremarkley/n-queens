@@ -172,7 +172,6 @@ window.countNRooksSolutions = function(n) {
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
-  // debugger
   var foundSolution = false;
   var solution = new Board({ n: n });
   if (n === 2 || n === 3 || n === 0) {
@@ -187,12 +186,12 @@ window.findNQueensSolution = function(n) {
     if (board.get('pieces') === n) {
       solution = board;
       foundSolution = true;
-      //board.togglePiece(row, col);
       return;
     } else {
       if (!firstTime) {
         col = (col + 1) % n;
-        if (col == 0) {
+        //if col gets set back to 0 we need to go to the next row
+        if (col === 0) {
           row++;
         }
       }
@@ -205,8 +204,7 @@ window.findNQueensSolution = function(n) {
               hasTraversed = true;
             }
               hasTraversed = true;
-              board.togglePiece(i, j); //0 1 0 0
-              debugger
+              board.togglePiece(i, j);
               traverseBoard(board, i, j, false);
           } else {
             break;
@@ -230,7 +228,52 @@ window.findNQueensSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var solutionCount = undefined; //fixme
+  var solutionCount = 0;
+  var solution = new Board({ n: n });
+  if (n === 2 || n === 3) {
+    return 0;
+  }
+  if (n === 0) {
+    return 1;
+  }
+  
+  var traverseBoard = function(board, row, col, firstTime) {
+    if (board.hasAnyConflicts(row, col)) {
+      board.togglePiece(row, col);
+      return;
+    }
+    if (board.get('pieces') === n) {
+      solutionCount++;
+      board.togglePiece(row, col);
+      return;
+    } else {
+      if (!firstTime) {
+        col = (col + 1) % n;
+        //if col gets set back to 0 we need to go to the next row
+        if (col === 0) {
+          row++;
+        }
+      }
+      var hasTraversed = false;
+      for (var i = row; i < n; i++) {
+        for (var j = 0; j < n; j++) {
+            if (col !== 0 && !hasTraversed) {
+              j = col;
+              hasTraversed = true;
+            }
+              hasTraversed = true;
+              board.togglePiece(i, j);
+              traverseBoard(board, i, j, false);
+        }
+      }
+        if (col - 1 < 0 && row > 0) {
+          board.togglePiece(row - 1, n - 1);
+        } else {
+          board.togglePiece(row, col - 1);
+        }
+    }
+  };
+  traverseBoard(solution, 0, 0, true);
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
