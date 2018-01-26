@@ -20,21 +20,14 @@ window.copyNestedArray = function(arr) {
     return val.slice();
   });
 };
-
+//Initial implementation, not very optimal
 window.findNRooksSolutionElse = function(n) {
   rooksSolutions = 0;
-  var solution = new Board({'n': n}); //fixme
-  //var board = new Board({n: n});
-  // console.log('board-n: ', board.get('n'));
-  // console.log(`boardrows ${board.rows()}`);
-  
+  var solution = new Board({'n': n}); 
   
   var innerFunction = function(boardRows, startingRow, startingColumn) {
     var foundSolution = false;
     var originalBoard = new Board(boardRows);
-    /*var originalBoardRows = originalBoard.rows().map(function(val) {
-      return val.slice();
-    });*/
     var originalBoardRows = copyNestedArray(boardRows);
     
     for (var i = startingRow; i < originalBoard.get('n'); i++) {
@@ -45,15 +38,12 @@ window.findNRooksSolutionElse = function(n) {
           //board each time
           var board = new Board(copyNestedArray(originalBoardRows));
           board.togglePiece(i, j);
-          //if (rowConflict) then i + 1
           if (!board.hasRowConflictAt(i) && !board.hasColConflictAt(j)) {
-            //rooks++;
             //check how many pieces are on board, if piece == n we return board
             if (board.get('pieces') === n) {
               solution = board;
               foundSolution = true;
               rooksSolutions++;
-              
               break;
             }
             //pass in next available slot and the same board
@@ -84,6 +74,8 @@ window.findNRooksSolutionElse = function(n) {
   
   return solution.rows();
 };
+//second iteration, a decent amount faster than the first but need to refactor so a new board is not created
+//after each recursive call
 window.findNRooksSolution = function(n) {
   window.rooksSolutions = 0;
   var solution = new Board({n: n});
@@ -94,7 +86,6 @@ window.findNRooksSolution = function(n) {
     //Need original copy of rows
     var copiedBoardRows = copyNestedArray(boardRows);
     while (!foundSolution && origBoard._isInBounds(startingRow, startingCol)) {
-      //
       var newBoard = new Board(copyNestedArray(copiedBoardRows));
       newBoard.togglePiece(startingRow, startingCol);
       
@@ -104,7 +95,6 @@ window.findNRooksSolution = function(n) {
         solution = newBoard;
       } else {
         var nextStartingRow = startingRow + 1;
-        //startingRow = nextStartingRow;
         var nextStartingColumn = 0;
         var hasColConflict = true;
         while (hasColConflict) {
@@ -122,11 +112,6 @@ window.findNRooksSolution = function(n) {
           innerFunction(newBoard.rows(), nextStartingRow, nextStartingColumn);
         }
         if (startingCol === newBoard.get('n') - 1) {
-          // startingCol = 0;
-          // while (newBoard.hasPieceInCol(startingCol) && startingCol < origBoard.get('n') - 1 ) {
-          //   startingCol++; 
-          // }
-          //startingRow++;
           startingRow++;
           startingCol = 0;
           while (newBoard.hasPieceInCol(startingCol)) {

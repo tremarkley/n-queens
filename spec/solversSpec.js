@@ -2,7 +2,7 @@ describe('solvers', function() {
   window.displayBoard = function() {};
 
   describe('findNRooksSolution()', function() {
-
+    //disabled test because it takes so long to run
     xit('finds a valid solution for n of 1-8', function() {
       _.range(1, 9).map(function(n) {
         var solutionBoard = new Board(findNRooksSolution(n));
@@ -21,7 +21,7 @@ describe('solvers', function() {
   });
 
   describe('countNRooksSolutions()', function() {
-
+    //disabled test because it takes so long to run
     xit('finds the number of valid solutions for n of 1-8', function() {
       _.range(1, 9).map(function(n) {
         var solutionCount = countNRooksSolutions(n);
