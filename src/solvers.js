@@ -178,13 +178,8 @@ window.findNQueensSolution = function(n) {
   if (n === 2 || n === 3 || n === 0) {
     return solution.rows();
   }
-  //starting column, starting row;
-  //For each board
-  //first thing check to see if @ row x, col y there is a conflict
-  ///return immediately, don't continue
-  /// 
   
-  var traverseBoard = function(board, row, col) {
+  var traverseBoard = function(board, row, col, firstTime) {
     if (board.hasAnyConflicts(row, col)) {
       board.togglePiece(row, col);
       return;
@@ -195,28 +190,39 @@ window.findNQueensSolution = function(n) {
       //board.togglePiece(row, col);
       return;
     } else {
+      if (!firstTime) {
+        col = (col + 1) % n;
+        if (col == 0) {
+          row++;
+        }
+      }
       var hasTraversed = false;
       for (var i = row; i < n; i++) {
         for (var j = 0; j < n; j++) {
           if (!foundSolution) {
-            if (!hasTraversed) {
+            if (col !== 0 && !hasTraversed) {
               j = col;
               hasTraversed = true;
-            } else {
-              board.togglePiece(i, j);
-              traverseBoard(board, i, j);
             }
+              hasTraversed = true;
+              board.togglePiece(i, j); //0 1 0 0
+              debugger
+              traverseBoard(board, i, j, false);
           } else {
             break;
           }
         }
       }
-      board.togglePiece(row, col);
+      if (!foundSolution) {
+        if (col - 1 < 0 && row >= 0) {
+          board.togglePiece(row - 1, n - 1);
+        } else {
+          board.togglePiece(row, col - 1);
+        }
+      }
     }
   };
-  solution.togglePiece(0, 0);
-  traverseBoard(solution, 0, 0);
-  
+  traverseBoard(solution, 0, 0, true);
   
   console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
   return solution.rows();
