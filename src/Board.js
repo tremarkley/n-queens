@@ -235,6 +235,19 @@
         }
       }
       return false; // fixme
+    },
+    // _getFirstRowColumnIndexForMajorDiagonalOn: function(rowIndex, colIndex) {
+    //   return colIndex - rowIndex;
+    // },
+
+    // _getFirstRowColumnIndexForMinorDiagonalOn: function(rowIndex, colIndex) {
+    //   return colIndex + rowIndex;
+    // },
+    
+    hasAnyConflicts(row, column) {
+      var major = _getFirstRowColumnIndexForMajorDiagonalOn(row, column);
+      var minor = _getFirstRowColumnIndexForMinorDiagonalOn(row, column);
+      return (hasMajorDiagonalConflictAt(major) || hasMinorDiagonalConflictAt(minor) || hasRowConflictAt(row) || hasColConflictAt(col)); 
     }
 
     /*--------------------  End of Helper Functions  ---------------------*/
