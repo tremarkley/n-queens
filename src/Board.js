@@ -245,9 +245,9 @@
     // },
     
     hasAnyConflicts(row, column) {
-      var major = _getFirstRowColumnIndexForMajorDiagonalOn(row, column);
-      var minor = _getFirstRowColumnIndexForMinorDiagonalOn(row, column);
-      return (hasMajorDiagonalConflictAt(major) || hasMinorDiagonalConflictAt(minor) || hasRowConflictAt(row) || hasColConflictAt(col)); 
+      var major = this._getFirstRowColumnIndexForMajorDiagonalOn(row, column);
+      var minor = this._getFirstRowColumnIndexForMinorDiagonalOn(row, column);
+      return (this.hasMajorDiagonalConflictAt(major) || this.hasMinorDiagonalConflictAt(minor) || this.hasRowConflictAt(row) || this.hasColConflictAt(column)); 
     }
 
     /*--------------------  End of Helper Functions  ---------------------*/
